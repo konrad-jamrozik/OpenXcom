@@ -42,6 +42,7 @@
 #include "ProjectileFlyBState.h"
 #include "MeleeAttackBState.h"
 #include "../fmath.h"
+//#include "../Engine/Logger.h"
 
 namespace OpenXcom
 {
@@ -2915,6 +2916,7 @@ bool TileEngine::awardExperience(BattleActionAttack attack, BattleUnit *target, 
 		case ETM_REACTIONS_OR_MELEE: if (RNG::percent(50)) { expFuncA = &BattleUnit::addReactionExp; } else { expFuncA = &BattleUnit::addMeleeExp; } break;
 		case ETM_REACTIONS_OR_FIRING: if (RNG::percent(50)) { expFuncA = &BattleUnit::addReactionExp; } else { expFuncA = &BattleUnit::addFiringExp; } break;
 		case ETM_REACTIONS_OR_THROWING: if (RNG::percent(50)) { expFuncA = &BattleUnit::addReactionExp; } else { expFuncA = &BattleUnit::addThrowingExp; } break;
+		// kja bravery training with medikit (1/2)
 		case ETM_BRAVERY: expFuncA = &BattleUnit::addBraveryExp; break;
 		case ETM_BRAVERY_2X: expMultiply = 200; expFuncA = &BattleUnit::addBraveryExp; break;
 		case ETM_BRAVERY_AND_REACTIONS: expFuncA = &BattleUnit::addBraveryExp; expFuncB = &BattleUnit::addReactionExp; break;
@@ -3061,12 +3063,26 @@ bool TileEngine::hitUnit(BattleActionAttack attack, BattleUnit *target, const Po
 	const int healthOrig = target->getHealth();
 	const int stunLevelOrig = target->getStunlevel();
 
-	target->damage(relative, damage, type, _save, attack);
-
+	const int adjustedDamage = target->damage(relative, damage, type, _save, attack);
 	const int healthDamage = healthOrig - target->getHealth();
 	const int stunDamage = target->getStunlevel() - stunLevelOrig;
+	const int damageAdjustment = adjustedDamage - damage;
+	// doesn't compile anymore: C2027: use of undefined type 'OpenXcom:Game'
+	// Language *lang = _save->getBattleState()->getGame()->getLanguage();
+	// std::string attackerName = attack.attacker != NULL ? attack.attacker->getName(lang) : "<null attacker>";
+	// std::string targetName = target != NULL ? target->getName(lang) : "<null target>";
 
-	// hit log
+	// kja Log(LOG_INFO) HIT UNIT
+	// kja TODO improve ResistType / RandomType print logic with https://stackoverflow.com/a/3342744/986533
+	// cross-reference X-COM files values
+	//Log(LOG_INFO) << "\n" << "kja hitUnit" << "\n"
+	//	<< attackerName << " ==HIT==> " << targetName << "\n"
+	//	<< "ResistType " << type->ResistType << " RandomType " << type->RandomType << "\n"
+	//	<< "HP went down by " << healthDamage << " from " << healthOrig << " to " << target->getHealth() << ".\n"
+	//	<< "The raw damage was " << damage << " adjusted by " << damageAdjustment << " to " << adjustedDamage << "\n"
+	//	<< "Stun level changed by " << stunDamage << " from " << stunLevelOrig << " to " << target->getStunlevel() << "\n";
+
+	// kja HITLOG call append to hitlog
 	if (attack.attacker)
 	{
 		if (healthDamage > 0 || stunDamage > 0)
@@ -3074,16 +3090,16 @@ bool TileEngine::hitUnit(BattleActionAttack attack, BattleUnit *target, const Po
 			int damagePercent = ((healthDamage + stunDamage) * 100) / target->getBaseStats()->health;
 			if (damagePercent <= 20)
 			{
-				_save->appendToHitLog(HITLOG_SMALL_DAMAGE, attack.attacker->getFaction());
+				_save->appendToHitLog(HITLOG_SMALL_DAMAGE, attack.attacker->getFaction(), damage);
 			}
 			else
 			{
-				_save->appendToHitLog(HITLOG_BIG_DAMAGE, attack.attacker->getFaction());
+				_save->appendToHitLog(HITLOG_BIG_DAMAGE, attack.attacker->getFaction(), damage);
 			}
 		}
 		else
 		{
-			_save->appendToHitLog(HITLOG_NO_DAMAGE, attack.attacker->getFaction());
+			_save->appendToHitLog(HITLOG_NO_DAMAGE, attack.attacker->getFaction(), damage);
 		}
 	}
 
@@ -3146,6 +3162,7 @@ void TileEngine::hit(BattleActionAttack attack, Position center, int power, cons
 
 	voxelCheckFlush();
 	const auto part = (terrainMeleeTilePart > 0) ? (VoxelType)terrainMeleeTilePart : voxelCheck(center, attack.attacker);
+    // kja application of randomization formula to power. This will be passed to hitUnit() below.
 	const auto damage = type->getRandomDamage(power);
 	const auto tileFinalDamage = type->getTileFinalDamage(type->getRandomDamageForTile(power, damage));
 	if (part >= V_FLOOR && part <= V_OBJECT)
@@ -4605,6 +4622,8 @@ int TileEngine::psiAttackCalculate(BattleActionAttack::ReadOnly attack, const Ba
 		_save
 	);
 
+	int itemPsiAttackResult = psiAttackResult;
+
 	psiAttackResult =  ModScript::scriptFunc1<ModScript::TryPsiAttackUnit>(
 		victim->getArmor(),
 		psiAttackResult,
@@ -4612,9 +4631,14 @@ int TileEngine::psiAttackCalculate(BattleActionAttack::ReadOnly attack, const Ba
 		_save
 	);
 
+	// kja Log(LOG_INFO) PSI ATTACK
+	Log(LOG_INFO) << "\n" << "kja PSI att: " << attackStrength << " def: " << defenseStrength
+		<< " dis: " << dis << " itemRes: " << itemPsiAttackResult
+		<< " finalRes: " << psiAttackResult << "\n";
 	return psiAttackResult;
 }
 
+// kja psi attack strength calculation
 /**
  * Attempts a panic or mind control action.
  * @param action Pointer to an action.

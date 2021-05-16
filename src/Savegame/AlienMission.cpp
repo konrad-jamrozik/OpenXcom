@@ -1462,6 +1462,23 @@ MissionSite *AlienMission::spawnMissionSite(SavedGame &game, const Mod &mod, con
 		missionSite->setAlienRace(_race);
 		missionSite->setTexture(area.texture);
 		missionSite->setCity(area.name);
+
+		// int width, length, height;
+		// deployment->getDimensions(&width, &length, &height);
+		// kja Log(LOG_INFO) << "\n" << "kja AlienMission::spawnMissionSite" << "\n"
+		// << "Mission site: " << "\n"
+		// << "  alien race " << _race << "\n"
+		// << "  seconds remaining " << missionSite->getSecondsRemaining() << "\n"
+		// << "  hours remaining " << missionSite->getSecondsRemaining()/3600 << "\n"
+		// << "  24h days remaining " << (float)missionSite->getSecondsRemaining()/(float)86400 << "\n"
+		// << "Deployment:" << "\n"
+		// << "  marker name " << deployment->getMarkerName() << "\n"
+		// << "  type " << deployment->getType() << "\n"
+		// << "  alert message " << deployment->getAlertMessage() << "\n"
+		// << "  civilians count " << deployment->getCivilians() << "\n"
+		// << "  dimensions W/L/H " << width << "/" << length << "/" << height << "\n"
+		// << "  despawn penalty " << deployment->getDespawnPenalty() << "\n";
+
 		game.getMissionSites()->push_back(missionSite);
 
 		if (Options::oxceGeoscapeDebugLogMaxEntries > 0)

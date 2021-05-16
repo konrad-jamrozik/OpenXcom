@@ -514,6 +514,7 @@ void ActionMenuState::handleAction()
 
 		if (newHitLog)
 		{
+			// kja HITLOG call append to new hitlog
 			_game->getSavedGame()->getSavedBattle()->appendToHitLog(HITLOG_PLAYER_FIRING, FACTION_PLAYER, tr(weapon->getType()));
 		}
 	}

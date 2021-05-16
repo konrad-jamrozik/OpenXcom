@@ -1650,6 +1650,7 @@ ModScript::NewTurnItemParser::NewTurnItemParser(ScriptGlobal* shared, const std:
 	b.addCustomPtr<const Mod>("rules", mod);
 }
 
+// kja the script for computing psi attack. See also my other todos with "psi attack".
 ModScript::TryPsiAttackItemParser::TryPsiAttackItemParser(ScriptGlobal* shared, const std::string& name, Mod* mod) : ScriptParserEvents{ shared, name,
 	"psi_attack_success",
 

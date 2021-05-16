@@ -487,6 +487,9 @@ Mod::Mod() :
 
 	for (int itd = DT_10; itd < DAMAGE_TYPES; ++itd)
 	{
+		// kja default damage type behaviors (see the ctor def)
+		// Observe they are overriden with damageAlter, per https://www.ufopaedia.org/index.php/Ruleset_Reference_Nightly_(OpenXcom)
+		// And damage formula computed in BattleUnit::damage()
 		dmg = new RuleDamageType();
 		dmg->ResistType = static_cast<ItemDamageType>(itd);
 		dmg->IgnoreOverKill = true;

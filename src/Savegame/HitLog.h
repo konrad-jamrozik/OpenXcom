@@ -60,6 +60,7 @@ public:
 	HitLog(Language *lang);
 	/// Appends the given text to the hit log.
 	void appendToHitLog(HitLogEntryType type, UnitFaction faction);
+	void appendToHitLog(HitLogEntryType type, UnitFaction faction, int damage);
 	void appendToHitLog(HitLogEntryType type, UnitFaction faction, const std::string &text);
 	/// Gets the hit log text.
 	std::string getHitLogText(bool convert = false) const;

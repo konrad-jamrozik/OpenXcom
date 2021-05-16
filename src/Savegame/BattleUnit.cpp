@@ -1606,7 +1606,12 @@ int BattleUnit::damage(Position relative, int damage, const RuleDamageType *type
 	}
 
 	RNG::RandomState rand = RNG::globalRandomState().subSequence();
+
+	int kjaDamage1 = damage;
+
 	damage = reduceByResistance(damage, type->ResistType);
+
+	int kjaDamage2 = damage;
 
 	if (!type->IgnoreDirection)
 	{
@@ -1681,7 +1686,6 @@ int BattleUnit::damage(Position relative, int damage, const RuleDamageType *type
 	const int orgDamage = damage;
 	const int overKillMinimum = type->IgnoreOverKill ? 0 : -UnitStats::OverkillMultipler * _stats.health;
 
-
 	{
 		ModScript::HitUnit::Output args { damage, bodypart, side, };
 		ModScript::HitUnit::Worker work { this, attack.damage_item, attack.weapon_item, attack.attacker, save, attack.skill_rules, orgDamage, type->ResistType, attack.type };
@@ -1694,6 +1698,7 @@ int BattleUnit::damage(Position relative, int damage, const RuleDamageType *type
 		work.execute(this->getArmor()->getScript<ModScript::HitUnit>(), args);
 
 		damage = args.getFirst();
+
 		bodypart = (UnitBodyPart)args.getSecond();
 		side = (UnitSide)args.getThird();
 		if (bodypart >= BODYPART_MAX)
@@ -1706,6 +1711,8 @@ int BattleUnit::damage(Position relative, int damage, const RuleDamageType *type
 		}
 	}
 
+	int kjaDamage3 = damage;
+
 	// side and bodypart overrides (used by environmental conditions only)
 	if (sideOverride != SIDE_MAX)
 	{
@@ -1715,7 +1722,6 @@ int BattleUnit::damage(Position relative, int damage, const RuleDamageType *type
 	{
 		bodypart = bodypartOverride;
 	}
-
 
 	const RuleItem *specialDamageTransform = attack.damage_item ? attack.damage_item->getRules() : nullptr;
 	int specialDamageTransformChance = 0;
@@ -1731,6 +1737,7 @@ int BattleUnit::damage(Position relative, int damage, const RuleDamageType *type
 		specialDamageTransform = nullptr;
 	}
 
+	int kjaDamage4 = -1;
 
 	// update state of unit stats
 	if (damage > 0)
@@ -1755,6 +1762,8 @@ int BattleUnit::damage(Position relative, int damage, const RuleDamageType *type
 			damage -= getArmor(side) * type->ArmorEffectiveness;
 		}
 
+		kjaDamage4 = damage;
+		
 		if (damage > 0)
 		{
 			// stun level change
@@ -1943,7 +1952,13 @@ int BattleUnit::damage(Position relative, int damage, const RuleDamageType *type
 			save->getBattleGame()->statePushNext(new ExplosionBState(save->getBattleGame(), p, BattleActionAttack{ BA_SELF_DESTRUCT, this, }, 0));
 		}
 	}
-
+	Log(LOG_INFO) << "\n" << "kja BattleUnit::damage "
+		<< "initial " << kjaDamage1
+		<< " after armor reduction " << kjaDamage2
+		<< " after armor script (shield) " << kjaDamage3
+		<< " after armor " << kjaDamage4 
+		<< " (armor * effectiveness = " << getArmor(side) << " * " << type->ArmorEffectiveness << ")"
+		<< " final " << damage;
 	return damage;
 }
 
@@ -1962,6 +1977,7 @@ int BattleUnit::getStunlevel() const
 	return _stunlevel;
 }
 
+// kja check if health recovery (regen) is negative
 bool BattleUnit::hasNegativeHealthRegen() const
 {
 	if (_health > 0)
@@ -2712,6 +2728,7 @@ void BattleUnit::prepareEnergy(int energy)
 	}
 }
 
+// kja losing health to fire and fatal wounds
 /**
  * Helper function preparing Health recovery at beginning of turn.
  * @param health Health grain this turn.
@@ -2897,6 +2914,9 @@ void BattleUnit::updateUnitStats(bool tuAndEnergy, bool rest)
 			}
 		}
 
+		// kja application of recovery formulas.
+		// For example suit [1] has healthRecovery of -0.1*normalizedStunLevel
+		// [1] https://xcf.trigramreactor.net/master/article/STR_SUIT_UC
 		// update stats
 		prepareHealth(_armor->getHealthRecovery(this, HPRecovery));
 		prepareMana(_armor->getManaRecovery(this, MNRecovery));
@@ -3974,6 +3994,7 @@ bool BattleUnit::postMissionProcedures(const Mod *mod, SavedGame *geoscape, Save
 
 	auto recovery = (int)RNG::generate((healthLossOriginal*0.5),(healthLossOriginal*1.5));
 
+	// kja bravery training with medikit (2/2)
 	if (_exp.bravery && stats->bravery < caps.bravery)
 	{
 		if (_exp.bravery > RNG::generate(0,10)) stats->bravery += 10;

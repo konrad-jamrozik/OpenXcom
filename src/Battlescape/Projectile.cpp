@@ -497,7 +497,9 @@ void Projectile::applyAccuracy(Position origin, Position *target, double accurac
 		int accuracy_check = RNG::generate(1, 100);
 		bool hit_successful = ( accuracy_check <= real_accuracy );
 
-		if (_save->getDebugMode())
+		// kja always show brutal-oxce acc shooting log
+		// if (_save->getDebugMode())
+		if (true)
 		{
 			std::ostringstream ss;
 			ss << "Acc:" << accuracy*100 << " Exposure " << exposure*100 << "%";

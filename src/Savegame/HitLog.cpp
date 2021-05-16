@@ -52,12 +52,18 @@ void HitLog::clearHitLog(bool resetTurnDiary, bool ignoreLastEntry)
 	_ss.clear();
 }
 
+void HitLog::appendToHitLog(HitLogEntryType type, UnitFaction faction)
+{
+	this->appendToHitLog(type, faction, -1);
+}
+
+// kja HITLOG appendToHitLog. See also overloads.
 /**
  * Appends a given entry to the hit log.
  * @param type Type of hit log entry.
  * @param faction Faction of the actor.
  */
-void HitLog::appendToHitLog(HitLogEntryType type, UnitFaction faction)
+void HitLog::appendToHitLog(HitLogEntryType type, UnitFaction faction, int damage) 
 {
 	switch (type)
 	{
@@ -84,13 +90,18 @@ void HitLog::appendToHitLog(HitLogEntryType type, UnitFaction faction)
 		_ss << _newShot;
 		break;
 	case HITLOG_NO_DAMAGE:
-		_ss << _noDamage;
+		// kja We are trimming one char at the end and re-appending space becuase the default localized strings
+		// are "0 ", "hit ", and "HIT ", as seen in
+		// Brutal-OXCE\common\Language\OXCE\en-US.yml
+		// We want to have:
+		// "0/damage ", "hit/damage ", "HIT/damage "
+		_ss << _noDamage.substr(0, _noDamage.size()-1) << (damage != -1 ? "/" + std::to_string(damage) : "") << " ";
 		break;
 	case HITLOG_SMALL_DAMAGE:
-		_ss << _smallDamage;
+		_ss << _smallDamage.substr(0, _smallDamage.size()-1) << (damage != -1 ? "/" + std::to_string(damage) : "") << " ";
 		break;
 	case HITLOG_BIG_DAMAGE:
-		_ss << _bigDamage;
+		_ss << _bigDamage.substr(0, _bigDamage.size()-1) << (damage != -1 ? "/" + std::to_string(damage) : "") << " ";
 		break;
 	default:
 		break;

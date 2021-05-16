@@ -1914,7 +1914,7 @@ void BattlescapeGame::primaryAction(Position pos)
 				{
 					psiTargetAllowed = false;
 				}
-
+				// kja triggering PSI attack
 				if (psiTargetAllowed)
 				{
 					_currentAction.updateTU();

@@ -131,6 +131,8 @@ float normalizedMorale(const BattleUnit *unit)
 	return normalizedHelper(unit->getMorale(), 100);
 }
 
+// kja normalized stun formula
+// Which is: percentage of existing health
 float normalizedStun(const BattleUnit *unit)
 {
 	return normalizedHelper(unit->getStunlevel(), unit->getHealth());

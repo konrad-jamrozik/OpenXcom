@@ -904,6 +904,7 @@ const std::vector<Craft*>* GeoscapeState::updateActiveCrafts()
 	return &_activeCrafts;
 }
 
+// kja Geospace time ticker. It is a series of methods, see below.
 /**
  * Takes care of any game logic that has to
  * run every game second, like craft movement.
@@ -2751,6 +2752,7 @@ void GeoscapeState::time1Month()
 {
 	_game->getSavedGame()->addMonth();
 
+	// kja geospace determination of alien missions
 	// Determine alien mission for this month.
 	determineAlienMissions();
 
@@ -3648,6 +3650,7 @@ void GeoscapeState::determineAlienMissions()
 		}
 	}
 
+	// kja Geoscape mission scheduling
 	// well, here it is, ladies and gents, the nuts and bolts behind the geoscape mission scheduling.
 
 	// first we need to build a list of "valid" commands
@@ -4006,7 +4009,7 @@ void GeoscapeState::determineAlienMissions()
 	}
 }
 
-
+// kja Mission scheduling triggered at the beginning of each month. (called from "Geoscape mission scheduling")
 /**
  * Processes a directive to start up a mission, if possible.
  * @param command the directive from which to read information.

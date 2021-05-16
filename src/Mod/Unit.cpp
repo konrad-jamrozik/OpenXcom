@@ -22,6 +22,7 @@
 #include "LoadYaml.h"
 #include "Mod.h"
 #include "Armor.h"
+//#include "../Engine/Logger.h"
 
 namespace OpenXcom
 {

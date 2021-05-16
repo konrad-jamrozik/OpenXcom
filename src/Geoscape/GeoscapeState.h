@@ -81,6 +81,8 @@ public:
 	void handle(Action *action) override;
 	/// Updates the palette and timer.
 	void init() override;
+	// kja main game loop (apparently)
+	// See also GeoscapeState::timeAdvance
 	/// Runs the timer.
 	void think() override;
 	/// Displays the game time/date. (+Funds)

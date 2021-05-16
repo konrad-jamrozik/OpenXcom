@@ -3422,8 +3422,16 @@ const std::string& SavedBattleGame::getHiddenMovementBackground() const
  */
 void SavedBattleGame::appendToHitLog(HitLogEntryType type, UnitFaction faction)
 {
+	_hitLog->appendToHitLog(type, faction, -1);
+}
+
+/**
+ * Appends a given entry to the hit log. Works only during the player's turn.
+ */
+void SavedBattleGame::appendToHitLog(HitLogEntryType type, UnitFaction faction, int damage)
+{
 	if (_side != FACTION_PLAYER) return;
-	_hitLog->appendToHitLog(type, faction);
+	_hitLog->appendToHitLog(type, faction, damage);
 }
 
 /**

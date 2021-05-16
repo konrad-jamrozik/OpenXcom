@@ -474,6 +474,8 @@ void MonthlyReportState::calculateChanges()
 	{
 		pactScore = infiltration->getPoints();
 	}
+	// kja country funding increase at end of the month
+	// Meat in Country.cpp::newMonth
 	int averageFunding = _game->getSavedGame()->getCountryFunding() / _game->getSavedGame()->getCountries()->size() / 1000 * 1000;
 	for (auto* country : *_game->getSavedGame()->getCountries())
 	{

@@ -328,6 +328,8 @@ void AlienInventoryState::calculateMeleeWeapon(BattleUnit* unit, BattleItem* wea
 		attack.weapon_item = weapon;
 		attack.damage_item = weapon;
 		attack.skill_rules = nullptr;
+		// kja melee hit chance formula. Note this info is built-in, using F1 on paper doll (AlienInventoryState)
+		// For details, see https://openxcom.org/forum/index.php/topic,8024.msg138880.html#msg138880 
 		int hitChance = BattleUnit::getFiringAccuracy(attack, _game->getMod());
 
 		auto victim = meleeDodgeTarget;
@@ -404,6 +406,9 @@ void AlienInventoryState::calculateRangedWeapon(BattleUnit* unit, BattleItem* we
 				attack.weapon_item = weapon;
 				attack.damage_item = weapon;
 				attack.skill_rules = nullptr;
+
+				// kja melee hit chance with ranged weapon formula. Note this info is built-in, using F1 on paper doll (AlienInventoryState)
+				// For details, see https://openxcom.org/forum/index.php/topic,8024.msg138880.html#msg138880 
 				int hitChance = BattleUnit::getFiringAccuracy(attack, _game->getMod());
 
 				if (victim)

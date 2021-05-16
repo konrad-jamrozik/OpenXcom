@@ -642,6 +642,7 @@ public:
 	const std::string& getHiddenMovementBackground() const;
 	/// Appends a given entry to the hit log. Works only during the player's turn.
 	void appendToHitLog(HitLogEntryType type, UnitFaction faction);
+	void appendToHitLog(HitLogEntryType type, UnitFaction faction, int damage);
 	void appendToHitLog(HitLogEntryType type, UnitFaction faction, const std::string &text);
 	/// Gets the hit log.
 	const HitLog *getHitLog() const;

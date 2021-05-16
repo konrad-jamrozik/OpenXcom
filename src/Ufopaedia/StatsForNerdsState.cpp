@@ -3733,6 +3733,7 @@ void StatsForNerdsState::initCraftWeaponList()
 
 	if (craftWeaponRule->getStandardReload() > 0)
 	{
+		// kja craft calculated damage formula as seen in stats for nerds
 		addHeading("_calculatedValues");
 		{
 			// (damage / standard reload * 60) * (accuracy / 100) * (50-100% damage spread)

@@ -80,6 +80,7 @@ int RuleDamageType::getRandomDamage(int power, int mode) const
  */
 int RuleDamageType::getRandomDamage(int power, FuncRef<int(int, int)> randFunc) const
 {
+	// kja damage randomization formula
 	ItemDamageRandomType randType = RandomType;
 	if (randType == DRT_UFO_WITH_FOUR_DICE)
 	{

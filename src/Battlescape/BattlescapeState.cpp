@@ -2237,6 +2237,7 @@ void BattlescapeState::updateSoldierInfo(bool checkFOV)
 	_numberOfEnemiesTotalPlusWounded = j;
 
 	{
+		// kja show overstun (stun shock). Presumably.
 		// first show all stunned allies with negative health regen (usually caused by high stun level)
 		for (auto* bu : *_save->getUnits())
 		{
@@ -2467,7 +2468,9 @@ Map *BattlescapeState::getMap() const
  */
 void BattlescapeState::debug(const std::string &message)
 {
-	if (_save->getDebugMode())
+	// kja always show debug message
+	// if (_save->getDebugMode())
+	if (true)
 	{
 		_txtDebug->setText(message);
 	}
@@ -2552,6 +2555,7 @@ std::string BattlescapeState::getMeleeDamagePreview(BattleUnit *actor, BattleIte
 			dmgType = weapon->getRules()->getMeleeType();
 		}
 
+		// kja logic to display melee damage
 		ss << tr(weapon->getRules()->getType());
 		ss << "\n";
 		ss << dmgType->getRandomDamage(totalDamage, 1);

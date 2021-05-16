@@ -1554,6 +1554,7 @@ void Soldier::calcStatString(const std::vector<StatString *> &statStrings, bool 
 	}
 }
 
+// kja gym training, martial training
 /**
  * Trains a soldier's Physical abilities
  */
